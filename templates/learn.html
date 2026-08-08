@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WumpusMind - Learn Algorithms</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;}
+        .tab-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.1rem; padding: 0.5rem 1rem; border-radius: 4px; }
+        .tab-btn.active { color: var(--text-primary); background: var(--cell-visited); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        code { background: var(--bg-color); padding: 0.2rem 0.4rem; border-radius: 4px; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Algorithms in WumpusMind</h1>
+        <div style="margin-bottom: 2rem;">
+            <a href="/" class="btn" style="display: inline-block; width: auto; background: var(--cell-visited);">Back to Home</a>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('kb')">Knowledge Base & Prop Logic</button>
+            <button class="tab-btn" onclick="showTab('search')">Search Algorithms (A* / BFS)</button>
+        </div>
+
+        <div id="kb" class="tab-content active">
+            <h2>Knowledge Base & Propositional Logic</h2>
+            <p>The Knowledge Base (KB) uses Propositional Logic to infer absolute truths about the Wumpus World.</p>
+            <h3>Forward Chaining Rules</h3>
+            <ul>
+                <li><code>NOT Breeze(x,y) ⟹ ∀ adj, NOT Pit(adj)</code></li>
+                <li><code>NOT Stench(x,y) ⟹ ∀ adj, NOT Wumpus(adj)</code></li>
+                <li><code>Safe(x,y) ⟺ (NOT Pit(x,y) AND NOT Wumpus(x,y))</code></li>
+            </ul>
+            <p>Example Trace: If the agent visits (0,0) and detects no breeze, it immediately concludes that adjacent cells (0,1) and (1,0) do not contain pits.</p>
+        </div>
+
+        <div id="search" class="tab-content">
+            <h2>Search (Pathfinding)</h2>
+            <p>Once a target cell is decided by the logic engines, the agent must navigate there safely through known territory.</p>
+            <h3>A* Search (Hybrid Agent)</h3>
+            <p>Uses the Manhattan Distance heuristic: <code>h(n) = |x1 - x2| + |y1 - y2|</code> to find the shortest safe path to the target. Time complexity: O(b^d).</p>
+            <h3>Breadth-First Search (Baseline Agent)</h3>
+            <p>The BFS Baseline agent does not use logic. It blindly expands its frontier uniformly, checking adjacent cells regardless of safety. Time complexity: O(V+E).</p>
+        </div>
+    </div>
+
+    <script>
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>

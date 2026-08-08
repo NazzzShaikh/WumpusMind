@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WumpusMind - Setup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4">
+    <!-- GSAP for animations later -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="rules-card setup-card" id="rulesCard">
+            <h1 style="margin-bottom: 1rem;">How to Play</h1>
+            <p><strong>Goal:</strong> Find the <span style="color:var(--gold);">✨ Gold</span> and return to the start cell without dying!</p>
+            
+            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Percepts</h3>
+            <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                <li><span style="font-size: 1.2rem;">🌬️</span> <strong>Breeze</strong>: A Pit is in an adjacent cell.</li>
+                <li><span style="font-size: 1.2rem;">🤢</span> <strong>Stench</strong>: The Wumpus is in an adjacent cell.</li>
+                <li><span style="font-size: 1.2rem;">✨</span> <strong>Glitter</strong>: The Gold is in this cell!</li>
+            </ul>
+            
+            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--danger);">Hazards</h3>
+            <p style="margin-bottom: 1.5rem;">Stepping into a <strong>Pit</strong> or the <strong>Wumpus</strong> cell means instant death.</p>
+            
+            <button class="btn" style="background: var(--safe); width: 100%;" onclick="showSetup()">Got it — Start</button>
+        </div>
+        
+        <div class="setup-card" id="setupCard" style="display: none;">
+            <h1>WumpusMind</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Hybrid Intelligent Wumpus World Agent</p>
+            
+            <div class="form-group">
+                <label for="gridSize">Grid Size: <span id="sizeVal">4</span>x<span id="sizeVal2">4</span></label>
+                <input type="range" id="gridSize" min="4" max="10" value="4" oninput="updateSizeLabel(this.value)">
+            </div>
+            
+            <div class="form-group">
+                <label for="difficulty">Difficulty</label>
+                <select id="difficulty">
+                    <option value="Easy">Easy (1 Wumpus, 10% Pits)</option>
+                    <option value="Medium">Medium (1 Wumpus, 15% Pits)</option>
+                    <option value="Hard">Hard (2 Wumpuses, 20% Pits)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="playMode">Game Mode</label>
+                <select id="playMode" onchange="toggleAlgorithm()">
+                    <option value="manual">Manual Play</option>
+                    <option value="autoplay" selected>Autoplay-AI</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="algorithmGroup">
+                <label for="algorithm">Algorithm</label>
+                <select id="algorithm">
+                    <option value="Hybrid">Hybrid Agent (KB + FOL + Prob + A*)</option>
+                    <option value="AStar">Pure A* Baseline</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button class="btn" style="flex: 1; background: var(--safe);" onclick="startGame()">Start Game</button>
+            </div>
+            
+            <div style="margin-top: 1.5rem; display: flex; flex-direction: row; gap: 1rem; align-items: center; justify-content: center;">
+                <a href="/learn" class="btn-outline">View Algorithm Explanations</a>
+                <a href="#" onclick="showRules(); return false;" class="btn-outline">How to Play / Rules</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            toggleAlgorithm();
+            if (localStorage.getItem('wumpusmind_seen_intro')) {
+                document.getElementById('rulesCard').style.display = 'none';
+                const setup = document.getElementById('setupCard');
+                setup.style.display = 'block';
+                // GSAP entry for setup instead
+                gsap.from("#setupCard", {y: 50, opacity: 0, duration: 0.8, ease: "power3.out"});
+            } else {
+                // GSAP entry for rules
+                gsap.from("#rulesCard", {y: 50, opacity: 0, duration: 0.8, ease: "power3.out"});
+            }
+        });
+
+        function updateSizeLabel(val) {
+            document.getElementById('sizeVal').innerText = val;
+            document.getElementById('sizeVal2').innerText = val;
+        }
+
+        function showSetup() {
+            localStorage.setItem('wumpusmind_seen_intro', 'true');
+            gsap.to("#rulesCard", {x: -50, opacity: 0, duration: 0.4, onComplete: () => {
+                document.getElementById('rulesCard').style.display = 'none';
+                const setup = document.getElementById('setupCard');
+                setup.style.display = 'block';
+                gsap.fromTo(setup, {x: 50, opacity: 0}, {x: 0, opacity: 1, duration: 0.4, ease: "power2.out"});
+            }});
+        }
+
+        function showRules() {
+            gsap.to("#setupCard", {x: 50, opacity: 0, duration: 0.4, onComplete: () => {
+                document.getElementById('setupCard').style.display = 'none';
+                const rules = document.getElementById('rulesCard');
+                rules.style.display = 'block';
+                gsap.fromTo(rules, {x: -50, opacity: 0}, {x: 0, opacity: 1, duration: 0.4, ease: "power2.out"});
+            }});
+        }
+
+        function toggleAlgorithm() {
+            const mode = document.getElementById('playMode').value;
+            const algGroup = document.getElementById('algorithmGroup');
+            if (mode === 'autoplay') {
+                algGroup.style.display = 'block';
+            } else {
+                algGroup.style.display = 'none';
+            }
+        }
+
+        function startGame() {
+            const size = parseInt(document.getElementById('gridSize').value);
+            const difficulty = document.getElementById('difficulty').value;
+            const mode = document.getElementById('playMode').value;
+            const algorithm = document.getElementById('algorithm').value;
+            
+            // GSAP exit animation
+            gsap.to("#setupCard", {x: 30, opacity: 0, duration: 0.4, ease: "power2.in", onComplete: () => {
+                fetch('/api/setup', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({size, difficulty, algorithm, play_mode: mode})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        window.location.href = '/play';
+                    }
+                });
+            }});
+        }
+    </script>
+</body>
+</html>
