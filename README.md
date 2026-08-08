@@ -1,43 +1,70 @@
 # WumpusMind
 
-**Hybrid Intelligent Wumpus World Agent**
-*A college semester AI project demonstrating logical deduction, probabilistic inference, and pathfinding in an animated web application.*
+WumpusMind is a modern, interactive web-based implementation of the classic Artificial Intelligence problem: **The Wumpus World**. 
 
-## Live Demo
-[Link to Render Deployment Placeholder]
+Designed to visually demonstrate how intelligent agents reason under uncertainty, WumpusMind features a sleek UI, smooth animations, and a powerful Hybrid Agent capable of propositional logic, Bayesian probability, and heuristic search.
 
-## Project Overview
-This project rebuilds the classic Wumpus World AI assignment from scratch as a polished, interactive web application. It features a custom-built Hybrid Agent that combines multiple AI paradigms to survive and thrive in a randomized hazard grid.
+## ✨ Features
 
-The UI is built with HTML/Vanilla JS and styled with CSS Grid, featuring GSAP for smooth animations and transitions.
+- **Dynamic Environments**: Customize grid sizes (from classic 4x4 up to 10x10) and difficulty levels (Easy, Medium, Hard) to control hazard density.
+- **Manual Play Mode**: Navigate the grid yourself using keyboard controls (WASD or Arrows) or an on-screen D-pad. The AI will still act as your "advisor," computing risks in the background.
+- **Autoplay / AI Mode**: Watch autonomous agents attempt to conquer the maze.
+  - **Hybrid Agent**: A state-of-the-art agent that combines a Propositional Knowledge Base, First-Order Logic reasoning, a Bayesian Probability Engine, and A* Pathfinding.
+  - **Pure A* Baseline**: A simpler algorithmic baseline that blindly explores the maze using only pathfinding heuristics without reasoning about hazards.
+- **Risk Heatmap**: Toggle a visual probability heatmap to see exactly how the Hybrid Agent calculates the risk of hidden Pits or the Wumpus on unvisited tiles.
+- **Live Reasoning Log**: See the AI's "thoughts" in real-time. The reasoning log outputs logic deductions (e.g., "No breeze at (0,1), so (0,2) has no Pit") and probability thresholds.
+- **Modern UI & Animations**: Built with CSS custom properties and GSAP for responsive, smooth gameplay.
 
-## AI Concepts Demonstrated
-WumpusMind allows you to step through the agent's thought process in real-time or run different algorithms against each other.
+## 🚀 Installation & Setup
 
-### 1. Knowledge Base (Propositional Logic)
-The agent maintains a Knowledge Base (KB) and uses forward chaining rules (e.g., `NOT Breeze(x,y) ⟹ adjacent cells NOT Pit`) to deduce safe cells with 100% certainty based on the absence of percepts.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/WumpusMind.git
+   cd WumpusMind
+   ```
 
-### 2. First-Order Logic (Resolution)
-When stenches are detected, the agent uses First-Order Logic style intersection across multiple stench locations to pinpoint the exact coordinates of the Wumpus.
+2. **Set up a virtual environment (Recommended):**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-### 3. Bayesian Probability (Risk Inference)
-When logical deduction fails to find a guaranteed safe move, the agent switches to probabilistic reasoning. It calculates a Joint Risk score for every unvisited cell based on the prior probabilities of hazards and the number of adjacent percepts (Breeze/Stench). This is visualized as an in-game Heatmap overlay.
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+   *(Note: The primary dependency is `Flask`. Standard Python libraries are used for the AI logic.)*
 
-### 4. Search & Pathfinding (A* and BFS)
-- **A***: The Hybrid Agent uses the A* algorithm with a Manhattan distance heuristic to find the shortest safe path to its chosen target cell.
-- **BFS**: Provided as a baseline, a pure Breadth-First Search agent blindly explores the grid, demonstrating the high mortality rate of uninformed search in Wumpus World.
+4. **Run the application:**
+   ```bash
+   python app.py
+   ```
 
-## Local Setup
+5. **Play:**
+   Open your browser and navigate to `http://127.0.0.1:5000/`.
 
-1. Clone the repository.
-2. Create a virtual environment: `python -m venv venv`
-3. Activate the environment:
-   - Windows: `venv\Scripts\activate`
-   - Mac/Linux: `source venv/bin/activate`
-4. Install requirements: `pip install -r requirements.txt`
-5. Run the application: `python app.py`
-6. Open your browser to `http://localhost:5000`
+## 🎮 How to Play
 
-## Deployment
-This application is fully configured for deployment on Render as a Python Web Service. 
-The provided `render.yaml` and `requirements.txt` instruct Render to use `gunicorn` as the WSGI HTTP server to serve the Flask application.
+**The Goal**: Find the **Gold** (✨) and grab it without dying to win the game!
+
+**Percepts & Hints**:
+- 🌬️ **Breeze**: You feel a breeze. There is a deadly **Pit** in one of the adjacent (up, down, left, right) cells.
+- 🤢 **Stench**: You smell something awful. The deadly **Wumpus** is in an adjacent cell.
+- ✨ **Glitter**: You found the gold! (The agent will automatically grab it).
+
+**Hazards**:
+- **Pits (🕳️)**: Stepping into a pit is instant death.
+- **The Wumpus (👹)**: Stepping onto the Wumpus cell is instant death.
+
+## 🧠 Under the Hood: The Hybrid Agent
+
+The **Hybrid Agent** is the core AI of WumpusMind, combining multiple layers of reasoning:
+1. **Knowledge Base (KB)**: Stores safe cells, visited cells, and known hazard locations.
+2. **Propositional Logic**: Applies forward chaining. For example, if a cell has no breeze, it mathematically proves that all adjacent cells are free of pits.
+3. **Bayesian Probability Engine**: When no guaranteed safe cells are left, the agent calculates the marginal probability of a hazard existing in unknown cells based on the distribution of known breezes and stenches. It then picks the cell with the lowest risk.
+4. **A* Pathfinding**: Once a target cell is chosen (either proven safe or calculated as lowest risk), the agent uses A* search to navigate safely through the known maze to reach it.
+
+## 🛠️ Technology Stack
+- **Backend**: Python 3, Flask (API & Routing)
+- **Frontend**: HTML5, CSS3 (Vanilla), JavaScript
+- **Animations**: [GSAP (GreenSock)](https://greensock.com/gsap/)
