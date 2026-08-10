@@ -8,7 +8,7 @@ WumpusMind is a web-based implementation of the classic Wumpus World AI problem.
 - **Difficulty Levels**: Choose between Easy, Medium, and Hard (affects Wumpus and Pit density).
 - **Manual Mode**: Play the game yourself using WASD, Arrow keys, or the on-screen D-pad. The AI reasoning log will still provide advice.
 - **Autoplay Mode (AI)**: Watch the AI play the game autonomously. Includes two algorithms:
-  - **Hybrid Agent**: Uses a Propositional Knowledge Base, First-Order Logic, a Bayesian Probability Engine, and A* Search to make informed decisions.
+  - **Hybrid Agent**: Uses a Propositional Knowledge Base, a Bayesian Probability Engine, and A* Search to make informed decisions.
   - **Pure A* Baseline**: A simple baseline that uses only A* pathfinding to explore unvisited cells blindly.
 - **Probability Heatmap**: A toggleable visual heatmap that shows the Hybrid Agent's calculated risk percentages for unvisited cells.
 - **Reasoning Log**: A live feed showing the AI's deductions, probability calculations, and chosen actions.
